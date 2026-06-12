@@ -1,0 +1,133 @@
+table Clinicas_sk
+	lineageTag: ccb0a956-3619-4b2b-a3d0-accefef1e126
+
+	measure 'Meta Satisfaccion' = AVERAGE(Clinicas_sk[Satisfaccion])
+		formatString: 0.0
+		lineageTag: 909eb2fd-b63e-4cb7-8cec-c9a62f3c9e8d
+
+	measure 'Meta CES' = AVERAGE(Clinicas_sk[CES])
+		formatString: 0\ %;-0\ %;0\ %
+		lineageTag: 52d11f4c-2cea-4d39-8cb8-a74b8b73207a
+
+	measure 'Meta FCR' = AVERAGE(Clinicas_sk[FCR])
+		formatString: 0\ %;-0\ %;0\ %
+		lineageTag: 009cc005-8165-45f4-9708-dbaf4048fea1
+
+	measure 'Meta NPS' = AVERAGE(Clinicas_sk[NPS])
+		formatString: 0\ %;-0\ %;0\ %
+		lineageTag: 77b9cec6-206e-4ce1-b6f2-e11bad26c494
+
+	column 'Id Clinica'
+		dataType: string
+		isHidden
+		lineageTag: 82896d50-1031-4db4-89d7-fce31b87c89a
+		summarizeBy: none
+		sourceColumn: Id Clinica
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Nombre Clinica'
+		dataType: string
+		lineageTag: 3efda215-cc4e-4c6f-a191-db8fca724345
+		summarizeBy: none
+		sourceColumn: Nombre Clinica
+
+		annotation SummarizationSetBy = Automatic
+
+	column Nit
+		dataType: string
+		isHidden
+		lineageTag: 97be2b9d-31e7-4491-a198-19d481a480a7
+		summarizeBy: none
+		sourceColumn: Nit
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Meta Diaria'
+		dataType: double
+		formatString: #,0
+		lineageTag: 0927209c-e246-4a85-9821-5b1e6921d39a
+		summarizeBy: none
+		sourceColumn: Meta Diaria
+
+		annotation SummarizationSetBy = Automatic
+
+	column Satisfaccion
+		dataType: double
+		lineageTag: 1e342228-525e-4190-a9dc-3865aa56831a
+		summarizeBy: none
+		sourceColumn: Satisfaccion
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column CES
+		dataType: double
+		lineageTag: a76a48b7-4bde-436a-bf2e-706e7a5d1efd
+		summarizeBy: none
+		sourceColumn: CES
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column FCR
+		dataType: double
+		lineageTag: c124a7e4-1475-4b22-b5cc-2c24ba5a0115
+		summarizeBy: none
+		sourceColumn: FCR
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column NPS
+		dataType: double
+		lineageTag: ddea2b96-4129-4f70-8fc0-35bcebe60a9d
+		summarizeBy: none
+		sourceColumn: NPS
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Nit_Numero = MID(Clinicas_sk[Nit],1,9)
+		lineageTag: 6c877910-e2fc-42d7-9a87-ab16b8e61004
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Clinicas_sk = m
+		mode: import
+		queryGroup: Dimensiones
+		source =
+				let
+				    Origen = PowerBI.Dataflows(null),
+				    #"9e84eaf3-f21f-44da-86d2-dc277b6f52a0" = Origen{[workspaceId="9e84eaf3-f21f-44da-86d2-dc277b6f52a0"]}[Data],
+				    #"8527ebf9-d42e-441c-8734-a87d9f8173c9" = #"9e84eaf3-f21f-44da-86d2-dc277b6f52a0"{[dataflowId="8527ebf9-d42e-441c-8734-a87d9f8173c9"]}[Data],
+				    #"tabla" = #"8527ebf9-d42e-441c-8734-a87d9f8173c9"{[entity="Clinicas"]}[Data],
+				    #"Columnas quitadas" = Table.RemoveColumns(tabla,{"cli_estado", "enc_id", "enc_tem_id", "enc_estado", "tem_enc_nombre", "tem_enc_estado"}),
+				    #"Duplicados quitados" = Table.Distinct(#"Columnas quitadas", {"cli_id"}),
+				    #"Columnas con nombre cambiado" = Table.RenameColumns(#"Duplicados quitados",{{"cli_id", "Id Clinica"}, {"cli_name", "Nombre Clinica"}}),
+				    #"Consultas combinadas" = Table.NestedJoin(#"Columnas con nombre cambiado", {"Id Clinica"}, #"Metas", {"Id Clinica"}, "Metas", JoinKind.LeftOuter),
+				    #"Se expandió Metas" = Table.ExpandTableColumn(#"Consultas combinadas", "Metas", {"Cantidad x dia"}, {"Metas.Cantidad x dia"}),
+				    #"Consultas combinadas1" = Table.NestedJoin(#"Se expandió Metas", {"Id Clinica"}, #"Meta Satisfaccion", {"Id Clinica"}, "Meta Satisfaccion", JoinKind.LeftOuter),
+				    #"Se expandió Meta Satisfaccion" = Table.ExpandTableColumn(#"Consultas combinadas1", "Meta Satisfaccion", {"Satisfaccion", "CES", "FCR", "NPS"}, {"Satisfaccion", "CES", "FCR", "NPS"}),
+				    #"Tipo cambiado1" = Table.TransformColumnTypes(#"Se expandió Meta Satisfaccion",{{"Satisfaccion", type number}, {"CES", type number}, {"FCR", type number}, {"NPS", type number}}),
+				    #"Valor reemplazado" = Table.ReplaceValue(#"Tipo cambiado1",null,0,Replacer.ReplaceValue,{"Metas.Cantidad x dia"}),
+				    #"Columnas con nombre cambiado1" = Table.RenameColumns(#"Valor reemplazado",{{"Metas.Cantidad x dia", "Meta Diaria"}}),
+				    #"Valor reemplazado1" = Table.ReplaceValue(#"Columnas con nombre cambiado1","Clínica ","",Replacer.ReplaceText,{"Nombre Clinica"}),
+				    #"Valor reemplazado2" = Table.ReplaceValue(#"Valor reemplazado1","Nuestra ","N. ",Replacer.ReplaceText,{"Nombre Clinica"}),
+				    #"Poner En Mayúsculas Cada Palabra" = Table.TransformColumns(#"Valor reemplazado2",{{"Nombre Clinica", Text.Proper, type text}})
+				in
+				    #"Poner En Mayúsculas Cada Palabra"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navegación
+

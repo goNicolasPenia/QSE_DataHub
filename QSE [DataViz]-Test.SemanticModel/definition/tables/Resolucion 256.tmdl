@@ -1,0 +1,30 @@
+table 'Resolucion 256'
+	lineageTag: 393f31d4-088d-4183-9d25-319033165d02
+
+	column Codigo
+		dataType: string
+		lineageTag: 96a3729e-a451-4cac-a8e0-c70ea11391ab
+		summarizeBy: none
+		sourceColumn: Codigo
+
+		annotation SummarizationSetBy = Automatic
+
+	column Descripcion
+		dataType: string
+		lineageTag: 2c63e0c0-7e62-4d5c-993e-d018424b8552
+		summarizeBy: none
+		sourceColumn: Descripcion
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Resolucion 256' = m
+		mode: import
+		queryGroup: Dimensiones
+		source =
+				let
+				    Origen = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("rZC9CsJAEIRfZbhaAv7VNmlszpCUSYqNWeUguYt3OcGnE3wyF2xiIQRJtzDLzMdXlmqdIC3USunYs3doGTFE8sYF3CLDcxicbY1kFpVK+WKsGc2derYjozhWCoSOMHi+RjsSXs+cz07iVlpIwhADLtSbzpC04QG5r1LPQb6PWXFQ9apUmwTZfI7Mu4aajj8UC2JsRYf+W4c+LcWxEx3zOb51LEexT6Dz3xT6hHwKMl38a7J+Aw==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Codigo = _t, Descripcion = _t])
+				in
+				    Origen
+
+	annotation PBI_ResultType = Table
+

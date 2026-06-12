@@ -1,0 +1,7 @@
+role C_Merced
+	modelPermission: read
+
+	tablePermission Clinicas_sk = [Nit_Numero] == "800094898"
+
+	annotation PBI_Id = 08fac9839ca54d51a6522cfa6fae209f
+

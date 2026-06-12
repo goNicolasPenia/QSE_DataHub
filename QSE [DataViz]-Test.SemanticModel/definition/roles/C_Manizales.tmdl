@@ -1,0 +1,7 @@
+role C_Manizales
+	modelPermission: read
+
+	tablePermission Clinicas_sk = [Nit_Numero] == "810003245"
+
+	annotation PBI_Id = 4995235201bf4f18bf3775f21b5a10be
+

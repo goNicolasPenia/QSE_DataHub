@@ -1,0 +1,34 @@
+relationship 1932f1a9-a4da-4465-a52c-514abae7acb0
+	fromColumn: Respuestas.'Id Pregunta'
+	toColumn: Preguntas.'Id Pregunta'
+
+relationship 25d5db43-703a-475f-b0fc-a32616860aaa
+	fromColumn: Respuestas.'Fecha Registro'
+	toColumn: Calendario.Fecha
+
+relationship 07c86d4d-a7e9-40c5-836d-4217279e4405
+	fromColumn: Respuestas.'Id Paciente'
+	toColumn: Pacientes.'Id Paciente'
+
+relationship 97ae5ed5-ac40-4e8f-b802-b98b8e41e2d5
+	fromColumn: Respuestas.'Id Encuestador'
+	toColumn: Encuestadores.'Id Encuestador'
+
+relationship 8ff60d18-d880-461e-806a-89b04af90921
+	fromColumn: Respuestas.cli_id
+	toColumn: Clinicas_sk.'Id Clinica'
+
+relationship 2ec0c99c-5a1a-4f59-b3fa-7866c8eca6eb
+	isActive: false
+	fromColumn: Pacientes.reg_pac_fecha_registro
+	toColumn: Calendario.Fecha
+
+relationship c4c43e4f-f74e-4285-bfaa-eac6038f2a98
+	isActive: false
+	fromColumn: Pacientes.reg_id_clinica
+	toColumn: Clinicas_sk.'Id Clinica'
+
+relationship eaf41630-4d2e-4006-a97c-e3168fbca29b
+	fromColumn: Respuestas.'Clas Res256'
+	toColumn: 'Resolucion 256'.Codigo
+

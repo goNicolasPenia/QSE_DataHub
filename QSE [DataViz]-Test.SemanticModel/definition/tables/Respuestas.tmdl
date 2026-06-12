@@ -1,0 +1,799 @@
+table Respuestas
+	lineageTag: b68d70b4-5633-4a57-a1da-0b2b44ec5a96
+
+	measure '% Cumplim QSE' = ```
+			
+			VAR C = 
+			        DIVIDE(Respuestas[Cant Encuestas Env],[Meta Corte],0)
+			
+			RETURN
+			    IF (
+			        C = 0,
+			        0,
+			        C
+			    )
+			```
+		formatString: 0.0\ %;-0.0\ %;0.0\ %
+		displayFolder: Medidas
+		lineageTag: 893064ee-082a-4dd6-aa3c-3a4a7cc4c4e8
+
+		changedProperty = FormatString
+
+	measure 'Meta Corte' = AVERAGEX(Clinicas_sk, Clinicas_sk[Meta Diaria]*Respuestas[Cantidad dias])
+		formatString: 0
+		displayFolder: Medidas
+		lineageTag: 2af54a72-f449-47c7-b47a-24509f4f6a35
+
+		changedProperty = FormatString
+
+	measure Dias = ```
+			MAX(Calendario[Día del Mes])
+			
+			```
+		formatString: 0
+		displayFolder: Medidas
+		lineageTag: e60cb779-6b57-4564-ad9d-f8229d6be0ad
+
+	measure 'Cant Encuestas Env' = ```
+			
+			VAR T =    
+			    CALCULATE(
+			        TOTALMTD(
+			            DISTINCTCOUNT(Respuestas[Id Paciente])
+			            ,Calendario[Fecha])
+			            ,Respuestas[Id Pregunta] = "345" || Respuestas[Id Pregunta] = "383"
+			    )
+			
+			RETURN
+			    IF (
+			        ISBLANK(T),
+			        0, T
+			    )
+			```
+		formatString: 0
+		displayFolder: Medidas
+		lineageTag: 66d93eed-f2c7-4243-a397-fb5f6df740c6
+
+		changedProperty = FormatString
+
+	measure 'Cantidad dias' = ```
+			
+			VAR T =
+			    IF (
+			        AVERAGE(Calendario[Dias Laborados]) < 1,
+			            DISTINCTCOUNT(Respuestas[Fecha Registro]),
+			        AVERAGE(Calendario[Dias Laborados])
+			    )  
+			RETURN
+			    IF (
+			        ISBLANK(T),
+			        0, T
+			    )
+			```
+		formatString: 0
+		displayFolder: Medidas
+		lineageTag: 5e2924f5-c598-4887-a5ad-f57c8a9e636e
+
+	measure '% Resp 5' = ```
+			
+			VAR __BASELINE_VALUE =
+				CALCULATE(
+					COUNT('Respuestas'[Respuesta en Numero]),  'Respuestas'[Respuesta] = "5"
+				)
+			VAR __MEASURE_VALUE = 
+			    CALCULATE(
+				    COUNTA('Respuestas'[Respuesta en Numero]),
+				    ALLSELECTED('Respuestas'[Respuesta])
+			    )
+			RETURN
+				IF(
+					NOT ISBLANK(__MEASURE_VALUE),
+					DIVIDE(__BASELINE_VALUE, __MEASURE_VALUE)
+				)
+			```
+		formatString: 0.00\ %;-0.00\ %;0.00\ %
+		displayFolder: Medidas
+		lineageTag: 7207000c-4121-4323-9dd8-ee50eb30578e
+
+		extendedProperty MeasureTemplate =
+				{
+				  "version": 0,
+				  "daxTemplateName": "PercentageDifferenceFrom"
+				}
+
+		changedProperty = FormatString
+
+	measure 'Total Respuesta' =
+			
+			CALCULATE(
+				COUNTA('Respuestas'[Respuesta en Numero]),
+				ALLSELECTED('Respuestas'[Respuesta])
+			)
+		formatString: 0
+		displayFolder: Medidas
+		lineageTag: 46dc7dce-c8b8-40ca-bb5b-8fbf9963a3fb
+
+		extendedProperty MeasureTemplate =
+				{
+				  "version": 0,
+				  "daxTemplateName": "TotalForSelectedCategory"
+				}
+
+		changedProperty = FormatString
+
+	measure 'Total Resp 5' = ```
+			
+				CALCULATE(
+					COUNT('Respuestas'[Respuesta en Numero]),  'Respuestas'[Respuesta] = "5"
+				)
+			```
+		formatString: 0
+		displayFolder: Medidas
+		lineageTag: 981ac35f-52b4-4f9f-a09c-04d34e789b2f
+
+	measure 'Total Resp 4' = ```
+			
+				CALCULATE(
+					COUNT('Respuestas'[Respuesta en Numero]),  'Respuestas'[Respuesta] = "4"
+				)
+			```
+		formatString: 0
+		displayFolder: Medidas
+		lineageTag: c5095e34-30aa-4d2a-a7cc-973ef3eba54f
+
+	measure '% Resp 4' = ```
+			
+			VAR __BASELINE_VALUE =
+				CALCULATE(
+					COUNT('Respuestas'[Respuesta en Numero]),  'Respuestas'[Respuesta] = "4"
+				)
+			VAR __MEASURE_VALUE = 
+			    CALCULATE(
+				    COUNTA('Respuestas'[Respuesta en Numero]),
+				    ALLSELECTED('Respuestas'[Respuesta])
+			    )
+			RETURN
+				IF(
+					NOT ISBLANK(__MEASURE_VALUE),
+					DIVIDE(__BASELINE_VALUE, __MEASURE_VALUE)
+				)
+			```
+		formatString: 0.00\ %;-0.00\ %;0.00\ %
+		displayFolder: Medidas
+		lineageTag: 13763b86-0fd2-4d49-b6ef-270068aa77e5
+
+		changedProperty = FormatString
+
+	measure '% Resp 4 y 5' = ```
+			
+			VAR __BASELINE_VALUE =
+				CALCULATE(
+					COUNT('Respuestas'[Respuesta]),  'Respuestas'[Respuesta] IN {"4", "5"}
+				)
+			VAR __MEASURE_VALUE = 
+			    CALCULATE(
+				    COUNTROWS(Respuestas)
+				   
+			    )
+			
+			VAR _Resultado =IF(
+					NOT ISBLANK(__MEASURE_VALUE),
+					DIVIDE(__BASELINE_VALUE, __MEASURE_VALUE)
+				)
+			RETURN
+			_Resultado
+				
+			```
+		formatString: 0.00\ %;-0.00\ %;0.00\ %
+		displayFolder: Medidas
+		lineageTag: 524b82ea-3138-4efa-be68-ab26da866228
+
+		changedProperty = FormatString
+
+	measure NPS =
+			
+			VAR T = ([% Apostol] - [% Detractor])
+			
+			RETURN
+			IF (ISBLANK(T), 0, T)
+		formatString: 0\ %;-0\ %;0\ %
+		displayFolder: Medidas
+		lineageTag: 2ca506d2-f51b-4e41-8e07-760d44ee0251
+
+		changedProperty = FormatString
+
+	measure '% Apostol' = ```
+			
+			VAR __BASELINE_VALUE =
+				CALCULATE(
+					DISTINCTCOUNT(Respuestas[Id Paciente]),  
+			        'Respuestas'[Clas NPS] = "Apostol", 
+			        Respuestas[Id Pregunta] IN {"374", "386"}
+				)
+			VAR __MEASURE_VALUE = 
+			    CALCULATE(
+				    DISTINCTCOUNT(Respuestas[Id Paciente]),
+				    ALLSELECTED('Respuestas'[Respuesta]),
+			        Respuestas[Id Pregunta] IN {"374", "386"},
+			        Respuestas[Respuesta] <> "0"
+			    )
+			RETURN
+				IF(
+					NOT ISBLANK(__MEASURE_VALUE),
+					DIVIDE(__BASELINE_VALUE, __MEASURE_VALUE)
+				)
+			```
+		formatString: 0.0\ %;-0.0\ %;0.0\ %
+		displayFolder: Medidas
+		lineageTag: 0db232c3-6fcb-4348-9eca-cf9f7216c1f8
+
+		changedProperty = FormatString
+
+	measure '% Detractor' = ```
+			
+			VAR __BASELINE_VALUE =
+				CALCULATE(
+					DISTINCTCOUNT(Respuestas[Id Paciente]),  
+			        'Respuestas'[Clas NPS] = "Detractor", 
+			        Respuestas[Id Pregunta] IN {"374", "386"}
+				)
+			VAR __MEASURE_VALUE = 
+			    CALCULATE(
+				    DISTINCTCOUNT(Respuestas[Id Paciente]),
+				    ALLSELECTED('Respuestas'[Respuesta]),
+			        Respuestas[Id Pregunta] IN {"374", "386"},
+			        Respuestas[Respuesta] <> "0"
+			    )
+			RETURN
+				IF(
+					NOT ISBLANK(__MEASURE_VALUE),
+					DIVIDE(__BASELINE_VALUE, __MEASURE_VALUE)
+				)
+			```
+		formatString: 0.0\ %;-0.0\ %;0.0\ %
+		displayFolder: Medidas
+		lineageTag: 13801f19-6f93-4e75-8534-428598db1088
+
+		changedProperty = FormatString
+
+	measure 'Cantidad Respuestas' = ```
+			DISTINCTCOUNT(Respuestas[Id Paciente]) 
+			```
+		formatString: #,0
+		displayFolder: Medidas
+		lineageTag: 717821be-defb-40a1-9a7d-5651405c3196
+
+	measure FCR = ```
+			
+			VAR __BASELINE_VALUE =
+				CALCULATE(
+					COUNT('Respuestas'[Flag FCR]),  
+			        'Respuestas'[Flag FCR] IN {"SI"}, 
+			        Respuestas[Id Pregunta] IN {"373", "385"},
+			        Respuestas[Respuesta] <> "0"
+				)
+			VAR __MEASURE_VALUE = 
+			    CALCULATE(
+				    COUNTROWS(Respuestas), 
+			        Respuestas[Id Pregunta] IN {"373", "385"},
+			        Respuestas[Respuesta] <> "0"
+				   
+			    )
+			
+			VAR _Resultado =IF(
+					NOT ISBLANK(__MEASURE_VALUE),
+					DIVIDE(__BASELINE_VALUE, __MEASURE_VALUE)
+				)
+			RETURN
+			IF (ISBLANK(_Resultado), 0, _Resultado)
+			```
+		formatString: 0\ %;-0\ %;0\ %
+		displayFolder: Medidas
+		lineageTag: 4d22a5fc-7b8b-46ca-8477-09c3d84bde46
+
+		changedProperty = FormatString
+
+	measure CES = ```
+			
+			VAR __BASELINE_VALUE =
+				CALCULATE(
+					COUNT('Respuestas'[Respuesta en Numero]),  
+			        'Respuestas'[Respuesta] IN {"4", "5"}, 
+			        Respuestas[Id Pregunta] IN { "372", "384"},
+			        'Respuestas'[Respuesta] <> "0"
+				)
+			VAR __MEASURE_VALUE = 
+			    CALCULATE(
+				    COUNTROWS(Respuestas), 
+			        Respuestas[Id Pregunta] IN { "372", "384"},
+			        'Respuestas'[Respuesta] <> "0"
+				)
+			
+			VAR _Resultado =IF(
+					NOT ISBLANK(__MEASURE_VALUE),
+					DIVIDE(__BASELINE_VALUE, __MEASURE_VALUE)
+				)
+			RETURN
+			IF (ISBLANK(_Resultado), 0, _Resultado)	
+			```
+		formatString: 0\ %;-0\ %;0\ %
+		displayFolder: Medidas
+		lineageTag: 24cb350c-bccd-4e61-a3a8-79df1a54b8a4
+
+		changedProperty = FormatString
+
+	measure Satisfaccion = ```
+			
+			VAR T =
+				CALCULATE(
+					AVERAGE('Respuestas'[Respuesta en Numero]), Respuestas[Id Pregunta] IN {"345", "383"},
+			        Respuestas[Respuesta] <> "0"
+				)
+			RETURN 
+			IF (ISBLANK(T), 0, T)
+			```
+		formatString: 0.0
+		displayFolder: Medidas
+		lineageTag: 1f6754bb-0eee-4e54-933f-cae634941200
+
+		changedProperty = FormatString
+
+	measure 'Prom GF-OA' = ```
+			
+			    CALCULATE( 
+			        AVERAGE('Respuestas'[Respuesta en Numero]), 
+			            Respuestas[Id Pregunta] = "346" || 
+			            Respuestas[Id Pregunta] = "347" || 
+			            Respuestas[Id Pregunta] = "348" || 
+			            Respuestas[Id Pregunta] = "349"
+			            )
+			```
+		formatString: 0.00
+		displayFolder: Medidas
+		lineageTag: 8535b346-2196-4da8-b560-4b504a6daecb
+
+	measure Cant = COUNTROWS(Respuestas)
+		formatString: #,0
+		displayFolder: Medidas
+		lineageTag: d20c528e-66be-4af0-ae63-039ab3f4472e
+
+		changedProperty = FormatString
+
+	measure 'Cant NPS' =
+			
+			VAR N =
+				CALCULATE(
+					DISTINCTCOUNT(Respuestas[Id Paciente]),
+			        Respuestas[Id Pregunta] IN {"374", "386"}
+			    )
+			
+			RETURN
+				IF(
+					ISBLANK(N),0,N)
+		formatString: 0
+		displayFolder: Medidas
+		lineageTag: 4e666259-dfca-4885-a422-c083714b9dbe
+
+	measure '% Neutral' =
+			
+			VAR N = 1 - [% Apostol] - [% Detractor]
+			
+			RETURN
+				IF(
+					ISBLANK(N), 0,
+					N
+				)
+		formatString: 0.00\ %;-0.00\ %;0.00\ %
+		displayFolder: Medidas
+		lineageTag: 8d155d52-3efe-4571-9cfa-b930f9f369cd
+
+	measure 'Tot Apostol' =
+			
+			VAR __BASELINE_VALUE =
+				CALCULATE(
+					DISTINCTCOUNT(Respuestas[Id Paciente]),  'Respuestas'[Clas NPS] = "Apostol", Respuestas[Id Pregunta] = "374"
+				)
+			
+			RETURN
+				IF(
+					ISBLANK(__BASELINE_VALUE),0,
+					__BASELINE_VALUE
+			        )
+		formatString: 0
+		displayFolder: Medidas
+		lineageTag: 5cb8c6cf-9400-4d3f-bac1-e82ead23f673
+
+	measure 'Tot NPS' = ```
+			
+			VAR __MEASURE_VALUE = 
+			    CALCULATE(
+				    DISTINCTCOUNT(Respuestas[Id Paciente]),
+				    ALLSELECTED('Respuestas'[Respuesta]),
+			        Respuestas[Id Pregunta] = "374"
+			    )
+			RETURN
+				IF(
+					ISBLANK(__MEASURE_VALUE),0,
+					__MEASURE_VALUE)
+			```
+		formatString: 0
+		displayFolder: Medidas
+		lineageTag: 03e14cb6-2867-4a7f-863a-49dfd6867944
+
+	measure 'Fecha Ultima Actualizacion' = MAX(Respuestas[Fecha Actualizacion])
+		formatString: General Date
+		displayFolder: Medidas
+		lineageTag: ec5c26fe-df94-40e4-8a86-7a2515097901
+
+	measure 'Prom GF-SEG' = ```
+			
+			    CALCULATE( 
+			        AVERAGE('Respuestas'[Respuesta en Numero]), 
+			            Respuestas[Id Pregunta] = "363" || 
+			            Respuestas[Id Pregunta] = "356" || 
+			            Respuestas[Id Pregunta] = "361" || 
+			            Respuestas[Id Pregunta] = "362"
+			            )
+			```
+		formatString: 0.00
+		displayFolder: Medidas
+		lineageTag: e0e24b8d-0988-4dd9-b2be-f0395c4779e6
+
+	measure 'Prom GF-HUM' = ```
+			
+			    CALCULATE( 
+			        AVERAGE('Respuestas'[Respuesta en Numero]), 
+			            Respuestas[Id Pregunta] = "350" || 
+			            Respuestas[Id Pregunta] = "352" || 
+			            Respuestas[Id Pregunta] = "353" || 
+			            Respuestas[Id Pregunta] = "354" || 
+			            Respuestas[Id Pregunta] = "355"
+			            )
+			```
+		formatString: 0.00
+		displayFolder: Medidas
+		lineageTag: 5ffacca6-8a8a-4b09-8fb3-2d0d2d1081a7
+
+	measure 'Prom GF-COM' = ```
+			
+			    CALCULATE( 
+			        AVERAGE('Respuestas'[Respuesta en Numero]), 
+			            Respuestas[Id Pregunta] = "320" || 
+			            Respuestas[Id Pregunta] = "357" || 
+			            Respuestas[Id Pregunta] = "358" || 
+			            Respuestas[Id Pregunta] = "360"
+			            )
+			```
+		formatString: 0.00
+		displayFolder: Medidas
+		lineageTag: 853b2ca7-78ad-4416-abbe-717fc0dbcae5
+
+	measure 'Form. Prue' =
+			CALCULATE(
+			        TOTALMTD(
+			            DISTINCTCOUNT(Respuestas[Id Paciente])
+			            ,Calendario[Fecha])
+			            ,Respuestas[Id Pregunta] = "345" || Respuestas[Id Pregunta] = "383",
+			            Respuestas[canal] = "WSP")
+		formatString: 0.00
+		displayFolder: Medidas
+		lineageTag: ca8ebf60-1038-42b3-b8dc-bd509e047b9a
+
+	measure 'Cant Encuestas Cont' = ```
+			
+			VAR T =     
+			    CALCULATE(
+			        TOTALMTD(
+			            DISTINCTCOUNT(Respuestas[Id Paciente])
+			            ,Calendario[Fecha])
+			            ,Respuestas[Id Pregunta] = "345" || Respuestas[Id Pregunta] = "383"
+			            ,Respuestas[Respuesta] <> "0"
+			    )
+			RETURN
+			    IF (
+			        ISBLANK(T),
+			        0, T
+			    )
+			```
+		formatString: 0
+		displayFolder: Medidas
+		lineageTag: d8b7c7ff-e089-48c0-a29d-4ccecac9dafe
+
+	measure '% Cumplim WSP' = ```
+			
+			VAR C = 
+			        DIVIDE([Cant Encuestas Cont], Respuestas[Cant Encuestas Env],0)
+			
+			RETURN
+			    C
+			```
+		formatString: 0.00\ %;-0.00\ %;0.00\ %
+		displayFolder: Medidas
+		lineageTag: 19b8530c-f44e-432d-8e05-85c2f08e3620
+
+	measure 'Cant Res256' =
+			
+			VAR N =
+				CALCULATE(
+					DISTINCTCOUNT(Respuestas[Id Paciente]),
+			        Respuestas[Id Pregunta] IN {"374", "386"}
+			    )
+			
+			RETURN
+				IF(
+					ISBLANK(N),0,N)
+		formatString: 0
+		displayFolder: Medidas
+		lineageTag: 13f0106e-5357-4093-9b48-f19ef8817325
+
+	measure prueba = AVERAGE(Calendario[Dias Laborados])
+		formatString: 0
+		displayFolder: Medidas
+		lineageTag: 08face57-1dd1-4847-945b-ecf613249ccb
+
+	column 'Respuesta en Numero' = ```
+			
+			    IF(
+			        Respuestas[Respuesta] = "0" ,CONVERT(Respuestas[Respuesta],INTEGER),
+			    IF(
+			        Respuestas[Respuesta] = "1" ,CONVERT(Respuestas[Respuesta],INTEGER),
+			    IF(
+			        Respuestas[Respuesta] = "2" ,CONVERT(Respuestas[Respuesta],INTEGER),
+			    IF(
+			        Respuestas[Respuesta] = "3" ,CONVERT(Respuestas[Respuesta],INTEGER),
+			    IF(
+			        Respuestas[Respuesta] = "4" ,CONVERT(Respuestas[Respuesta],INTEGER),
+			    IF(
+			        Respuestas[Respuesta] = "5" ,CONVERT(Respuestas[Respuesta],INTEGER),
+			    IF(
+			        Respuestas[Respuesta] = "6" ,CONVERT(Respuestas[Respuesta],INTEGER),
+			    IF(
+			        Respuestas[Respuesta] = "7" ,CONVERT(Respuestas[Respuesta],INTEGER),
+			    IF(
+			        Respuestas[Respuesta] = "8" ,CONVERT(Respuestas[Respuesta],INTEGER),
+			    IF(
+			        Respuestas[Respuesta] = "9" ,CONVERT(Respuestas[Respuesta],INTEGER),
+			    IF(
+			        Respuestas[Respuesta] = "10" ,CONVERT(Respuestas[Respuesta],INTEGER),
+			    BLANK()
+			    )))))))))))
+			```
+		formatString: 0
+		displayFolder: Medidas
+		lineageTag: 25dda2e9-0b0e-4937-a423-57c5e6fd21e9
+		summarizeBy: sum
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Clas NPS' = ```
+			
+			    IF(
+			        Respuestas[Respuesta] = "0" ,"N/A",
+			    IF(
+			        Respuestas[Respuesta] = "10" ,"Apostol",
+			    IF(
+			        Respuestas[Respuesta] = "9" ,"Apostol",
+			    IF(
+			        Respuestas[Respuesta] = "8" ,"Neutral",
+			    IF(
+			        Respuestas[Respuesta] = "7" ,"Neutral",
+			    "Detractor")))))
+			```
+		displayFolder: Medidas
+		lineageTag: 8d5760a9-bee3-465e-86c5-2853ca56eba1
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Flag FCR' = ```
+			
+			IF(
+			    Respuestas[Id Pregunta]="373" && CONTAINSSTRING(Respuestas[Respuesta],"SI") 
+			        ,"SI"
+			    ,IF ( 
+			        Respuestas[Id Pregunta]="385" && CONTAINSSTRING(Respuestas[Respuesta],"1") 
+			        ,"SI"
+			    ,IF ( 
+			        Respuestas[Id Pregunta]="385" && CONTAINSSTRING(Respuestas[Respuesta],"SI") 
+			        ,"SI"
+			        ,"NO"
+			    )
+			)
+			)
+			```
+		displayFolder: Medidas
+		lineageTag: 46f892c0-5f90-4445-85a2-026e00eb363d
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column Hora
+		dataType: int64
+		formatString: 0
+		displayFolder: Columnas
+		lineageTag: aa2c5388-1187-4928-9a37-360275241e72
+		summarizeBy: sum
+		sourceColumn: Hora
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Fecha Actualizacion'
+		dataType: dateTime
+		isHidden
+		formatString: General Date
+		displayFolder: Columnas
+		lineageTag: 7b86d183-6fea-4ca6-8b10-7a7b5f804cd7
+		summarizeBy: none
+		sourceColumn: Fecha Actualizacion
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Id Encuestador'
+		dataType: string
+		isHidden
+		displayFolder: Columnas
+		lineageTag: f1c215a6-59fc-4155-89cc-c760229f85d3
+		summarizeBy: none
+		sourceColumn: Id Encuestador
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Id Paciente'
+		dataType: string
+		isHidden
+		displayFolder: Columnas
+		lineageTag: e4f8d534-6b37-459e-a9d6-0f49caa83e84
+		summarizeBy: none
+		sourceColumn: Id Paciente
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Id Pregunta'
+		dataType: string
+		isHidden
+		displayFolder: Columnas
+		lineageTag: acc1c9fe-9b70-4e0d-b9d9-dd11c88c0268
+		summarizeBy: none
+		sourceColumn: Id Pregunta
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Respuesta
+		dataType: string
+		displayFolder: Columnas
+		lineageTag: b0783ebe-ff38-4f00-b74c-6af6bf8a9706
+		summarizeBy: none
+		sourceColumn: Respuesta
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Fecha Registro'
+		dataType: dateTime
+		formatString: Long Date
+		displayFolder: Columnas
+		lineageTag: 5d8c1bca-2d94-4486-ba3d-2e9725636296
+		summarizeBy: none
+		sourceColumn: Fecha Registro
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Id_CliEnc
+		dataType: int64
+		isHidden
+		formatString: 0
+		displayFolder: Columnas
+		lineageTag: bf79a496-d462-4820-8430-d772c6cee8e0
+		summarizeBy: sum
+		sourceColumn: Id_CliEnc
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column canal
+		dataType: string
+		displayFolder: Columnas
+		lineageTag: db39f591-22a0-4c5e-9b9c-406e7d680fde
+		summarizeBy: none
+		sourceColumn: canal
+
+		annotation SummarizationSetBy = Automatic
+
+	column cli_id
+		dataType: int64
+		isHidden
+		formatString: 0
+		displayFolder: Columnas
+		lineageTag: 05cc9a19-a81c-4785-af4e-f79b58dd447e
+		summarizeBy: none
+		sourceColumn: cli_id
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Enc. Realizada' = ```
+			
+			IF(
+			    (Respuestas[canal] = "WSP" && Respuestas[Id Pregunta]="383" && Respuestas[Respuesta] = "0")
+			    ,"N"
+			    ,"S"
+			)
+			
+			```
+		isHidden
+		displayFolder: Columnas
+		lineageTag: 5c344473-8758-4b06-91e8-20bbfcbdc4b5
+		summarizeBy: none
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Clas Res256' = ```
+			
+			    IF(
+			        Respuestas[Respuesta] = "10" ,"1. DS",
+			    IF(
+			        Respuestas[Respuesta] = "9" ,"1. DS",
+			    IF(
+			        Respuestas[Respuesta] = "8" ,"2. PS",
+			    IF(
+			        Respuestas[Respuesta] = "7" ,"2. PS",
+			    IF(
+			        Respuestas[Respuesta] = "6" ,"4. PN",
+			    IF(
+			        Respuestas[Respuesta] = "5" ,"4. PN",
+			    IF(
+			        Respuestas[Respuesta] = "4" ,"4. PN",
+			    IF(
+			        Respuestas[Respuesta] = "3" ,"3. DN",
+			    IF(
+			        Respuestas[Respuesta] = "2" ,"3. DN",
+			    IF(
+			        Respuestas[Respuesta] = "1" ,"3. DN",
+			    "5. NR"))))))))))
+			```
+		lineageTag: debcf3b4-9473-496b-972f-e9d369f5cc22
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column Sede
+		dataType: string
+		lineageTag: 9e06269f-3ba7-4336-a5c8-daffcb15c526
+		summarizeBy: none
+		sourceColumn: Sede
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Respuestas-74c1836a-a955-4429-a3c7-1679a8bda162 = m
+		mode: import
+		queryGroup: Hechos
+		source =
+				let
+				    Origen = PowerBI.Dataflows(null),
+				    #"workspace" = Origen{[workspaceId=WsIdQSE]}[Data],
+				    #"dataflow" = #"workspace"{[dataflowId=DfEncuestas]}[Data],
+				    Respuestas1 = #"dataflow"{[entity="Respuestas"]}[Data],
+				    #"Columnas con nombre cambiado" = Table.RenameColumns(Respuestas1,{{"resp_id_encuesta", "Id_CliEnc"}, {"resp_fecha_registro", "Fecha Registro"}, {"resp_respuesta", "Respuesta"}, {"resp_preg_id", "Id Pregunta"}, {"resp_reg_pac_id", "Id Paciente"}, {"resp_user_id", "Id Encuestador"}}),
+				    #"Tipo cambiado" = Table.TransformColumnTypes(#"Columnas con nombre cambiado",{{"Id Pregunta", type text}})
+				in
+				    #"Tipo cambiado"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navegación
+

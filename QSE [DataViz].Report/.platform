@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "QSE [DataViz]"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "2d182314-8745-a1b8-4366-381f2c948f18"
+  }
+}

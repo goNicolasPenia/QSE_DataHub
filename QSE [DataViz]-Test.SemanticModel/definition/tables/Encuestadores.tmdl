@@ -1,0 +1,68 @@
+table Encuestadores
+	lineageTag: ea068663-42a1-49be-b7cc-6e769d18d3f1
+
+	column 'Id Encuestador'
+		dataType: string
+		isHidden
+		lineageTag: 894e4f38-9922-4b5a-9c2e-f710426408d8
+		summarizeBy: none
+		sourceColumn: Id Encuestador
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Documento Encuestador'
+		dataType: string
+		lineageTag: 8df5d5d2-e50c-4a3a-b59f-cb8a1da20958
+		summarizeBy: none
+		sourceColumn: Documento Encuestador
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Email Encuestador'
+		dataType: string
+		isHidden
+		lineageTag: 5e413eff-91aa-43f7-b0f2-a0b6e73be5d1
+		summarizeBy: none
+		sourceColumn: Email Encuestador
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column us_status
+		dataType: boolean
+		isHidden
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 852fda77-6f97-4947-9b03-eb17b3d4f2be
+		summarizeBy: none
+		sourceColumn: us_status
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Nombre Encuestador'
+		dataType: string
+		lineageTag: de2a8f30-c89b-4cab-93ff-d39dcfc1ae66
+		summarizeBy: none
+		sourceColumn: Nombre Encuestador
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Encuestadores-e89e9bfa-11f4-49ab-93bb-e231ed2cad5f = m
+		mode: import
+		queryGroup: Dimensiones
+		source =
+				let
+				    Origen = PowerBI.Dataflows(null),
+				    #"9e84eaf3-f21f-44da-86d2-dc277b6f52a0" = Origen{[workspaceId="9e84eaf3-f21f-44da-86d2-dc277b6f52a0"]}[Data],
+				    #"8527ebf9-d42e-441c-8734-a87d9f8173c9" = #"9e84eaf3-f21f-44da-86d2-dc277b6f52a0"{[dataflowId="8527ebf9-d42e-441c-8734-a87d9f8173c9"]}[Data],
+				    #"tabla" = #"8527ebf9-d42e-441c-8734-a87d9f8173c9"{[entity="Encuestadores"]}[Data],
+				    #"Columnas con nombre cambiado" = Table.RenameColumns(tabla,{{"us_id", "Id Encuestador"}, {"us_document", "Documento Encuestador"}, {"us_email", "Email Encuestador"}})
+				in
+				    #"Columnas con nombre cambiado"
+
+	annotation PBI_ResultType = Table
+

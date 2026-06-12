@@ -1,0 +1,7 @@
+role C_INOOS
+	modelPermission: read
+
+	tablePermission Clinicas_sk = [Nit_Numero] == "901497939"
+
+	annotation PBI_Id = ba937e41bf11487b805b9e3854fe3af1
+

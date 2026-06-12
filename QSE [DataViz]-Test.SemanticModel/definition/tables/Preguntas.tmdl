@@ -1,0 +1,131 @@
+table Preguntas
+	lineageTag: 8db4b857-926f-4a10-a613-9c2e1cea3d4f
+
+	column 'Id Pregunta'
+		dataType: string
+		lineageTag: 8fb6863a-398d-43ed-99f4-320365ef9153
+		summarizeBy: none
+		sourceColumn: Id Pregunta
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Descripcion Pregunta'
+		dataType: string
+		lineageTag: 76d26459-d795-4d8c-b738-907697bac98b
+		summarizeBy: none
+		sourceColumn: Descripcion Pregunta
+
+		annotation SummarizationSetBy = Automatic
+
+	column preg_orden
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 5f20f598-8c9c-4c8b-b78d-4412513add91
+		summarizeBy: none
+		sourceColumn: preg_orden
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Id Encuesta'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 89a3c47a-a638-4c58-9499-6668801d20d7
+		summarizeBy: none
+		sourceColumn: Id Encuesta
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column preg_estado
+		dataType: boolean
+		isHidden
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: cd3d58a6-91b2-4105-a43c-a5e72f4e3d12
+		summarizeBy: none
+		sourceColumn: preg_estado
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column preg_servicio_asociado
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: be349d5d-8760-46ad-ba8d-3d883fcbc539
+		summarizeBy: none
+		sourceColumn: preg_servicio_asociado
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Tipo Servicio Enc'
+		dataType: string
+		lineageTag: c1fe9d57-cfce-4351-9d25-684a0c309148
+		summarizeBy: none
+		sourceColumn: Tipo Servicio Enc
+
+		annotation SummarizationSetBy = Automatic
+
+	column tipo_ser_estado
+		dataType: boolean
+		isHidden
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 706800d2-8eb1-4fa8-a8e6-0e90a94bbc6d
+		summarizeBy: none
+		sourceColumn: tipo_ser_estado
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column tipo_ser_orden
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: fcfe3ea4-9771-44f2-b161-c316dbe3d49c
+		summarizeBy: none
+		sourceColumn: tipo_ser_orden
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column tipo_pre_name_es
+		dataType: string
+		isHidden
+		lineageTag: 4a7b338c-7350-4b8d-b062-02efda7e713f
+		summarizeBy: none
+		sourceColumn: tipo_pre_name_es
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Preguntas-e15d0618-446c-4be9-bb2e-30f7a5d11ba1 = m
+		mode: import
+		queryGroup: Dimensiones
+		source =
+				let
+				    Origen = PowerBI.Dataflows(null),
+				    #"9e84eaf3-f21f-44da-86d2-dc277b6f52a0" = Origen{[workspaceId="9e84eaf3-f21f-44da-86d2-dc277b6f52a0"]}[Data],
+				    #"8527ebf9-d42e-441c-8734-a87d9f8173c9" = #"9e84eaf3-f21f-44da-86d2-dc277b6f52a0"{[dataflowId="8527ebf9-d42e-441c-8734-a87d9f8173c9"]}[Data],
+				    Preguntas1 = #"8527ebf9-d42e-441c-8734-a87d9f8173c9"{[entity="Preguntas"]}[Data],
+				    #"Columnas con nombre cambiado" = Table.RenameColumns(Preguntas1,{{"preg_id", "Id Pregunta"}, {"preg_pregunta", "Descripcion Pregunta"}, {"preg_enc_template_id", "Id Encuesta"}, {"tipo_ser_nombre", "Tipo Servicio Enc"}}),
+				    #"Valor reemplazado" = Table.ReplaceValue(#"Columnas con nombre cambiado","¿Cómo califica usted el servicio que le prestó la Clínica/IPS?","¿Cómo califica usted el servicio que le prestó la Clínica/IPS, siendo 1 la calificacion mas baja y 5 la mas alta?",Replacer.ReplaceText,{"Descripcion Pregunta"}),
+				    #"Filas ordenadas" = Table.Sort(#"Valor reemplazado",{{"Descripcion Pregunta", Order.Ascending}}),
+				    #"Valor reemplazado1" = Table.ReplaceValue(#"Filas ordenadas","CES:  en una escala de 1 a 5, donde 5 significa Muy facil  y 1 es Muy dificil, ¿Que tan facil fue lograr lo que necesitaba de la clinica  ?","CES: en una escala de 1 a 5, donde 5 significa Muy facil y 1 es Muy dificil, ¿Que tan facil fue lograr lo que necesitaba de la clinica ?",Replacer.ReplaceText,{"Descripcion Pregunta"}),
+				    #"Valor reemplazado2" = Table.ReplaceValue(#"Valor reemplazado1","FCR:  Para la siguiente afirmación  ¿ Desde el primer contacto que tuvo  con la clinica le resolvieron  lo que necesitaba ?  ?  [SI    NO] aplica para el servicio evaluado.   Observacion","FCR: Para la siguiente afirmación ¿ Desde el primer contacto que tuvo con la clinica le resolvieron lo que necesitaba ? ? [SI NO] aplica para el servicio evaluado. Observacion",Replacer.ReplaceText,{"Descripcion Pregunta"})
+				in
+				    #"Valor reemplazado2"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navegación
+

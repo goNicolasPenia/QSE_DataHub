@@ -1,0 +1,131 @@
+table 'X - Titulos'
+	lineageTag: abe9890a-af6d-4535-b0f7-32b9d528f957
+
+	measure 'Titulo Satisfaccion' =
+			
+			"Analisis Satisfaccion - "
+			& SELECTEDVALUE(Clinicas_sk[Nombre Clinica],"Todas las Clinicas")
+			& " - "
+			& SELECTEDVALUE(Calendario[Mes Año])
+		lineageTag: 4bb5e049-2568-41f6-ab42-6ebd935fda82
+
+	measure 'Titulo Mejoramiento Cont' =
+			
+			"Mejoramiento Continuo - "
+			& SELECTEDVALUE(Clinicas_sk[Nombre Clinica], "Todas las Clinicas")
+		lineageTag: a0d45455-0dff-4093-93cd-a8222bf40bae
+
+	measure 'Titulo Detalle Enc' =
+			
+			"Detalle de Encuestas - "
+			& SELECTEDVALUE(Clinicas_sk[Nombre Clinica])
+			& " - "
+			& SELECTEDVALUE(Calendario[Mes Año])
+		lineageTag: 051defa7-154f-44c9-b57a-c1fc51bb53d9
+
+	measure 'Titulo Cantidades' =
+			
+			"Productividad - "
+			& SELECTEDVALUE(Clinicas_sk[Nombre Clinica],"Todas las Clinicas")
+			& " - "
+			& SELECTEDVALUE(Calendario[Mes Año])
+		lineageTag: d479d686-de4c-4ba8-9f68-a7dbaa380e0e
+
+	measure 'Titulo Cumplim' =
+			
+			"Cumplimiento - "
+			& SELECTEDVALUE(Clinicas_sk[Nombre Clinica],"Todas las Clinicas")
+			& " - "
+			& SELECTEDVALUE(Calendario[Mes Año])
+		lineageTag: 4cb5dc7a-1675-4049-8913-55e2ebc8c3d8
+
+	measure 'Titulo CES' =
+			
+			"CES - "
+			& SELECTEDVALUE(Clinicas_sk[Nombre Clinica],"Todas las Clinicas")
+			& " - "
+			& SELECTEDVALUE(Calendario[Mes Año])
+		lineageTag: 1d949982-2abb-493c-bfe7-4db76fc512b1
+
+	measure 'Titulo FCR' =
+			
+			"FCR - "
+			& SELECTEDVALUE(Clinicas_sk[Nombre Clinica],"Todas las Clinicas")
+			& " - "
+			& SELECTEDVALUE(Calendario[Mes Año])
+		lineageTag: b971d9d3-1f9d-405e-a479-9b98ac37ee68
+
+	measure 'Titulo NPS' =
+			
+			"NPS - "
+			& SELECTEDVALUE(Clinicas_sk[Nombre Clinica],"Todas las Clinicas")
+			& " - "
+			& SELECTEDVALUE(Calendario[Mes Año])
+		lineageTag: 81184432-763c-464b-b774-a5c45f92224e
+
+	measure 'Titulo GF Oport' =
+			
+			"Grado Focal Oportunidad y Acceso - "
+			& SELECTEDVALUE(Clinicas_sk[Nombre Clinica],"Todas las Clinicas")
+			& " - "
+			& SELECTEDVALUE(Calendario[Mes Año])
+		lineageTag: f3c7d04a-9a69-40cc-931d-3bd3b51ef7ff
+
+	measure 'Titulo GF Seg' =
+			
+			"Grado Focal Seguridad - "
+			& SELECTEDVALUE(Clinicas_sk[Nombre Clinica],"Todas las Clinicas")
+			& " - "
+			& SELECTEDVALUE(Calendario[Mes Año])
+		lineageTag: 47295ab1-38c8-4ae6-9580-d25ba6af7a46
+
+	measure 'Titulo GF Hum' =
+			
+			"Grado Focal Humanización - "
+			& SELECTEDVALUE(Clinicas_sk[Nombre Clinica],"Todas las Clinicas")
+			& " - "
+			& SELECTEDVALUE(Calendario[Mes Año])
+		lineageTag: fce8104c-792c-4a57-b831-52db19e72e7c
+
+	measure 'Titulo GF Com' =
+			
+			"Grado Focal Comunicación - "
+			& SELECTEDVALUE(Clinicas_sk[Nombre Clinica],"Todas las Clinicas")
+			& " - "
+			& SELECTEDVALUE(Calendario[Mes Año])
+		lineageTag: 2c174eb3-e565-409a-bc48-b075875fe7a2
+
+	measure 'Titulo Lealtad' =
+			
+			"Fidelización Lealtad - "
+			& SELECTEDVALUE(Clinicas_sk[Nombre Clinica],"Todas las Clinicas")
+			& " - "
+			& SELECTEDVALUE(Calendario[Mes Año])
+		lineageTag: 833e4227-3595-4506-afff-61134970ffea
+
+	measure 'Titulo Posic' =
+			
+			"Fidelización Posicionamiento - "
+			& SELECTEDVALUE(Clinicas_sk[Nombre Clinica],"Todas las Clinicas")
+			& " - "
+			& SELECTEDVALUE(Calendario[Mes Año])
+		lineageTag: 8123eec2-0fb2-4b1a-9fc2-5d623daebe92
+
+	column Columna1
+		dataType: string
+		lineageTag: da9e312b-4059-4306-810c-ccc4e5f046b2
+		summarizeBy: none
+		sourceColumn: Columna1
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'X - Titulos-c3aa989d-a694-40c7-967f-1edb01ac6096' = m
+		mode: import
+		source =
+				let
+				    Origen = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Columna1 = _t])
+				in
+				    Origen
+
+	annotation PBI_ResultType = Table
+

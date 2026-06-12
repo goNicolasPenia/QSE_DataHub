@@ -1,0 +1,201 @@
+table Pacientes
+	lineageTag: e03ec53b-c52e-42bb-b1b6-757da3296acc
+
+	measure 'Cantidad Egresos' = ```
+			
+			VAR T =
+			    CALCULATE(
+			        DISTINCTCOUNT(Pacientes[Id Paciente]),
+			        USERELATIONSHIP(Calendario[Fecha],Pacientes[reg_pac_fecha_registro]),
+			        USERELATIONSHIP(Clinicas_sk[Id Clinica],Pacientes[reg_id_clinica])        
+			        )
+			RETURN 
+			    IF(ISBLANK(T),0,T)
+			```
+		formatString: #,0
+		lineageTag: 4a87cd8f-104a-4ddb-b92b-54ae35316cec
+
+	measure 'Muestra QSE' = ```
+			
+			VAR T =
+			    CALCULATE(
+			        DISTINCTCOUNT(Pacientes[Id Paciente]),
+			        USERELATIONSHIP(Calendario[Fecha],Pacientes[reg_pac_fecha_registro]),
+			        USERELATIONSHIP(Clinicas_sk[Id Clinica],Pacientes[reg_id_clinica]),
+			        Pacientes[enc_seleccion] = 1
+			        )
+			RETURN 
+			    IF(ISBLANK(T),0,T)
+			```
+		formatString: #,0
+		lineageTag: 11c0a79b-96f8-4224-8b55-563f4f13a57d
+
+	measure 'Muestra ISA' = ```
+			
+			VAR T =
+			    CALCULATE(
+			        DISTINCTCOUNT(Pacientes[Id Paciente]),
+			        USERELATIONSHIP(Calendario[Fecha],Pacientes[reg_pac_fecha_registro]),
+			        USERELATIONSHIP(Clinicas_sk[Id Clinica],Pacientes[reg_id_clinica]),
+			        Pacientes[enc_seleccion] = 1
+			        )
+			VAR S =
+			    [Cantidad Egresos]-T
+			RETURN 
+			    IF(ISBLANK(S),0,S)
+			```
+		formatString: #,0
+		lineageTag: 2deb600e-7d05-4fff-804a-800046b704ca
+
+	measure Negadas = 0
+		formatString: 0
+		lineageTag: ae29b942-a332-49b8-9d01-927fca4729f9
+
+	column 'Id Paciente'
+		dataType: string
+		isHidden
+		lineageTag: dfc72d97-56b0-42fb-8f9a-0a17c2d6584d
+		summarizeBy: none
+		sourceColumn: Id Paciente
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column reg_pac_fecha_registro
+		dataType: dateTime
+		isHidden
+		formatString: Short Date
+		lineageTag: 90c6ce37-a2bf-4dd2-bc54-d27939da2de1
+		summarizeBy: none
+		sourceColumn: reg_pac_fecha_registro
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Servicio
+		dataType: string
+		lineageTag: 5dddfb41-0f16-46cd-b20c-2c5773fb8d73
+		summarizeBy: none
+		sourceColumn: Servicio
+
+		annotation SummarizationSetBy = Automatic
+
+	column reg_id_clinica
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 9651d0aa-6a00-42d8-b4db-637ac4fa2dcc
+		summarizeBy: none
+		sourceColumn: reg_id_clinica
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = User
+
+	column Nit
+		dataType: string
+		lineageTag: a14fc0ff-82b2-4671-87c6-e7ee5d1dffb9
+		summarizeBy: none
+		sourceColumn: Nit
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Id Clin'
+		dataType: string
+		isHidden
+		lineageTag: d2a96345-e808-4ee5-9f7b-e10f7e4f84ee
+		summarizeBy: none
+		sourceColumn: Id Clin
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Nombre Empresa'
+		dataType: string
+		lineageTag: 46cd3ec6-4b35-4869-9dda-465bfcc5d0c6
+		summarizeBy: none
+		sourceColumn: Nombre Empresa
+
+		annotation SummarizationSetBy = Automatic
+
+	column codigo_contrato
+		dataType: string
+		isHidden
+		lineageTag: 60f53199-4813-457c-9757-ed31b1079544
+		summarizeBy: none
+		sourceColumn: codigo_contrato
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column T_Dcto
+		dataType: string
+		lineageTag: f4a02fc5-2863-47ea-8c7f-1bf5c79ef30c
+		summarizeBy: none
+		sourceColumn: T_Dcto
+
+		annotation SummarizationSetBy = Automatic
+
+	column Dcto_Pac
+		dataType: string
+		lineageTag: c326f8ba-a32b-43ae-8f21-66b6f7fce62d
+		summarizeBy: none
+		sourceColumn: Dcto_Pac
+
+		annotation SummarizationSetBy = Automatic
+
+	column Nombre_Pac
+		dataType: string
+		lineageTag: 310f9143-e985-4756-a074-1e7e5cd8354a
+		summarizeBy: none
+		sourceColumn: Nombre_Pac
+
+		annotation SummarizationSetBy = Automatic
+
+	column Tel1_Pac
+		dataType: string
+		lineageTag: 543cd75f-52bd-4786-aa9a-08084f82d270
+		summarizeBy: none
+		sourceColumn: Tel1_Pac
+
+		annotation SummarizationSetBy = Automatic
+
+	column Tel2_Pac
+		dataType: string
+		lineageTag: a3073cff-302c-4923-aeb8-610f8247838d
+		summarizeBy: none
+		sourceColumn: Tel2_Pac
+
+		annotation SummarizationSetBy = Automatic
+
+	column enc_seleccion
+		dataType: int64
+		formatString: 0
+		lineageTag: 686cdc45-538a-4427-a769-1b783661a803
+		summarizeBy: none
+		sourceColumn: enc_seleccion
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Pacientes-84e99083-5c08-4065-a5ed-f86df87df8db = m
+		mode: import
+		queryGroup: Dimensiones
+		source =
+				let
+				    Origen = Table.Combine({PacientesQSE,PacientesWSP,PacientesCRT,PacientesINO}),
+				    #"Valor reemplazado" = Table.ReplaceValue(Origen,"ó","o",Replacer.ReplaceText,{"Servicio"}),
+				    #"Poner En Mayúsculas Cada Palabra" = Table.TransformColumns(#"Valor reemplazado",{{"Nombre_Pac", Text.Proper, type text}}),
+				    #"Tipo cambiado" = Table.TransformColumnTypes(#"Poner En Mayúsculas Cada Palabra",{{"Id Paciente", type text}, {"reg_pac_fecha_registro", type date}}),
+				    #"Texto recortado" = Table.TransformColumns(#"Tipo cambiado",{{"Servicio", Text.Trim, type text}, {"T_Dcto", Text.Trim, type text}, {"Dcto_Pac", Text.Trim, type text}, {"Nombre_Pac", Text.Trim, type text}, {"Tel1_Pac", Text.Trim, type text}, {"Tel2_Pac", Text.Trim, type text}, {"codigo_contrato", Text.Trim, type text}, {"Nit", Text.Trim, type text}, {"Id Clin", Text.Trim, type text}, {"Nombre Empresa", Text.Trim, type text}}),
+				    #"Duplicados quitados" = Table.Distinct(#"Texto recortado", {"Id Paciente"})
+				in
+				    #"Duplicados quitados"
+
+	annotation PBI_ResultType = Table
+

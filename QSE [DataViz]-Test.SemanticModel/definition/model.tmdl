@@ -1,0 +1,48 @@
+model Model
+	culture: es-ES
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: es-CO
+	dataAccessOptions
+		fastCombine
+		legacyRedirects
+		returnErrorValuesAsNull
+
+queryGroup Dimensiones
+
+	annotation PBI_QueryGroupOrder = 0
+
+queryGroup Hechos
+
+	annotation PBI_QueryGroupOrder = 1
+
+queryGroup Config
+
+	annotation PBI_QueryGroupOrder = 2
+
+annotation PBI_QueryOrder = ["Respuestas","Preguntas","Encuestadores","Clinicas","Calendario","Pacientes","Metas","Dias Laborados","X - Titulos","Workspaces","WsIdQSE","WsIdCMIDf","DfEncuestas","DfCalendario","Meta Satisfaccion","PacientesQSE","PacientesWSP","Clinicas_sk","PacientesCRT","PacientesINO","Resolucion 256"]
+
+annotation __PBI_TimeIntelligenceEnabled = 0
+
+annotation __TEdtr = 1
+
+ref table Respuestas
+ref table Preguntas
+ref table Encuestadores
+ref table Calendario
+ref table Pacientes
+ref table 'X - Titulos'
+ref table Clinicas_sk
+ref table 'Resolucion 256'
+
+ref role C_Antioquia
+ref role C_CCQ
+ref role C_Estancia
+ref role C_INOOS
+ref role C_Manizales
+ref role C_Merced
+ref role C_Nuestra
+ref role C_Rosales
+ref role C_Sagrado
+
+ref cultureInfo es-ES
+

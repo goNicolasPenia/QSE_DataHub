@@ -1,0 +1,7 @@
+role C_CCQ
+	modelPermission: read
+
+	tablePermission Clinicas_sk = [Nit_Numero] == "900848340"
+
+	annotation PBI_Id = 29525d42564e4304853dff220730c0d8
+

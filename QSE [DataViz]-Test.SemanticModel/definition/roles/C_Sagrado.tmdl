@@ -1,0 +1,7 @@
+role C_Sagrado
+	modelPermission: read
+
+	tablePermission Clinicas_sk = [Nit_Numero] == "900408220"
+
+	annotation PBI_Id = 540ecc3567ab4c608ebd7e173f07a1e5
+

@@ -1,0 +1,188 @@
+expression Metas =
+		let
+		    Origen = SharePoint.Files("https://gospedale.sharepoint.com/sites/DatosBI", [ApiVersion = 15]),
+		    #"Metas QSE xlsx_https://gospedale sharepoint com/sites/BI/Shared Documents/General/QSE/" = Origen{[Name="Metas QSE.xlsx",#"Folder Path"="https://gospedale.sharepoint.com/sites/DatosBI/Shared Documents/General/5. TI/4. QSE/1. Datos Produccion/"]}[Content],
+		    #"Libro de Excel importado" = Excel.Workbook(#"Metas QSE xlsx_https://gospedale sharepoint com/sites/BI/Shared Documents/General/QSE/"),
+		    Metas_Sheet = #"Libro de Excel importado"{[Item="Metas",Kind="Sheet"]}[Data],
+		    #"Encabezados promovidos" = Table.PromoteHeaders(Metas_Sheet, [PromoteAllScalars=true]),
+		    #"Tipo cambiado" = Table.TransformColumnTypes(#"Encabezados promovidos",{{"Cantidad x dia", Int64.Type}})
+		in
+		    #"Tipo cambiado"
+	lineageTag: dff59efe-8cd9-4e16-8dd8-dbec3f9e277e
+	queryGroup: Dimensiones
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = Table
+
+expression 'Dias Laborados' =
+		let
+		    Origen = SharePoint.Files("https://gospedale.sharepoint.com/sites/DatosBI/", [ApiVersion = 15]),
+		    #"Metas QSE xlsx_https://gospedale sharepoint com/sites/BI/Shared Documents/General/QSE/" = Origen{[Name="Metas QSE.xlsx",#"Folder Path"="https://gospedale.sharepoint.com/sites/DatosBI/Shared Documents/General/5. TI/4. QSE/1. Datos Produccion/"]}[Content],
+		    #"Libro de Excel importado" = Excel.Workbook(#"Metas QSE xlsx_https://gospedale sharepoint com/sites/BI/Shared Documents/General/QSE/"),
+		    Dias_Lab_Sheet = #"Libro de Excel importado"{[Item="Dias_Lab",Kind="Sheet"]}[Data],
+		    #"Encabezados promovidos" = Table.PromoteHeaders(Dias_Lab_Sheet, [PromoteAllScalars=true]),
+		    #"Tipo cambiado" = Table.TransformColumnTypes(#"Encabezados promovidos",{{"Mes", Int64.Type}, {"Año", Int64.Type}, {"Dias Laborados", Int64.Type}, {"Mes Año", Int64.Type}})
+		in
+		    #"Tipo cambiado"
+	lineageTag: 31a78596-9265-492a-bda6-7d157c7fad61
+	queryGroup: Dimensiones
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = Table
+
+expression Workspaces =
+		let
+		    Origen = PowerBI.Dataflows(null),
+		    #"Se expandió Data" = Table.ExpandTableColumn(Origen, "Data", {"dataflowId", "dataflowName"}, {"Data.dataflowId", "Data.dataflowName"}),
+		    #"Otras columnas quitadas" = Table.SelectColumns(#"Se expandió Data",{"workspaceId", "Data.dataflowId", "Data.dataflowName", "workspaceName"}),
+		    #"Filas filtradas" = Table.SelectRows(#"Otras columnas quitadas", each [workspaceName] = "QSE - [Test]" or [workspaceName] = "QSE" or [workspaceName] = "1. Flujo de Datos [Test]" or [workspaceName] = "1. Flujo de Datos")
+		in
+		    #"Filas filtradas"
+	lineageTag: f8c16352-cce1-4ba5-9991-df420d161550
+	queryGroup: Config
+
+	annotation PBI_NavigationStepName = Navegación
+
+/// bf9b - DEV
+/// 52a0 - TEST
+/// 72ce - PRD
+expression WsIdQSE = "b4248ee2-ce3f-4ddc-9a69-88bd6062bf9b" meta [IsParameterQuery=true, List={"9e84eaf3-f21f-44da-86d2-dc277b6f52a0", "de5fb560-e677-404f-8a34-1511a96272ce", "b4248ee2-ce3f-4ddc-9a69-88bd6062bf9b"}, DefaultValue="b4248ee2-ce3f-4ddc-9a69-88bd6062bf9b", Type="Text", IsParameterQueryRequired=true]
+	lineageTag: afaf6b4f-1a6e-424b-985b-cb594c069ac3
+	queryGroup: Config
+
+	annotation PBI_ResultType = Text
+
+	annotation PBI_NavigationStepName = Navegación
+
+/// 1c12 - DEV
+/// 5db1 - TEST
+/// 19f5 - PROD
+expression WsIdCMIDf = "a46473bc-60e4-4e92-9b13-ea84376f1c12" meta [IsParameterQuery=true, List={"701d2716-3968-4466-a093-6b6a1db819f5", "a46473bc-60e4-4e92-9b13-ea84376f1c12", "0db3dabc-7f19-4bb7-ac6c-086553d15db1"}, DefaultValue="a46473bc-60e4-4e92-9b13-ea84376f1c12", Type="Text", IsParameterQueryRequired=true]
+	lineageTag: 9eff8e79-f17f-44bf-99b8-ec5e5b1062d2
+	queryGroup: Config
+
+	annotation PBI_ResultType = Text
+
+	annotation PBI_NavigationStepName = Navegación
+
+/// 3d4b - DEV
+/// 1ea3 - TEST
+/// 9e62 - PRD
+expression DfEncuestas = "43879601-0e18-4ee5-87bd-8aaf685a3d4b" meta [IsParameterQuery=true, List={"37c56f60-6bf3-49c4-846f-0d2551481ea3", "c4473fea-dc36-4928-b1d9-c48b03c19e62", "43879601-0e18-4ee5-87bd-8aaf685a3d4b"}, DefaultValue="43879601-0e18-4ee5-87bd-8aaf685a3d4b", Type="Text", IsParameterQueryRequired=false]
+	lineageTag: 2c7646c0-9388-4994-9396-2cb906608da7
+	queryGroup: Config
+
+	annotation PBI_ResultType = Text
+
+	annotation PBI_NavigationStepName = Navegación
+
+/// ef8c - TEST
+/// 3045 - PRD
+expression DfCalendario = "46bfaa8e-63ec-4d7d-9700-b11165813045" meta [IsParameterQuery=true, List={"57b38156-e0e2-45d7-9d7e-e44d4506ef8c", "46bfaa8e-63ec-4d7d-9700-b11165813045"}, DefaultValue=..., Type="Text", IsParameterQueryRequired=false]
+	lineageTag: d81e2275-0f59-4f84-ad64-b4c677de70bd
+	queryGroup: Config
+
+	annotation PBI_ResultType = Text
+
+	annotation PBI_NavigationStepName = Navegación
+
+expression 'Meta Satisfaccion' =
+		let
+		    Origen = SharePoint.Files("https://gospedale.sharepoint.com/sites/DatosBI/", [ApiVersion = 15]),
+		    #"Metas QSE xlsx_https://gospedale sharepoint com/sites/BI/Shared Documents/General/QSE/" = Origen{[Name="Metas QSE.xlsx",#"Folder Path"="https://gospedale.sharepoint.com/sites/DatosBI/Shared Documents/General/5. TI/4. QSE/1. Datos Produccion/"]}[Content],
+		    #"Libro de Excel importado" = Excel.Workbook(#"Metas QSE xlsx_https://gospedale sharepoint com/sites/BI/Shared Documents/General/QSE/"),
+		    #"Meta Satisf Clinica_Sheet" = #"Libro de Excel importado"{[Item="Meta Satisf Clinica",Kind="Sheet"]}[Data],
+		    #"Encabezados promovidos" = Table.PromoteHeaders(#"Meta Satisf Clinica_Sheet", [PromoteAllScalars=true]),
+		    #"Tipo cambiado" = Table.TransformColumnTypes(#"Encabezados promovidos",{{"CES", Percentage.Type}, {"FCR", Percentage.Type}, {"NPS", Percentage.Type}, {"Satisfaccion", type number}})
+		in
+		    #"Tipo cambiado"
+	lineageTag: 838e62d5-4b20-4d79-aad5-38d7f1bedf5c
+	queryGroup: Dimensiones
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = Table
+
+expression PacientesQSE =
+		let
+		    Origen = PowerBI.Dataflows(null),
+		    #"9e84eaf3-f21f-44da-86d2-dc277b6f52a0" = Origen{[workspaceId="9e84eaf3-f21f-44da-86d2-dc277b6f52a0"]}[Data],
+		    #"8527ebf9-d42e-441c-8734-a87d9f8173c9" = #"9e84eaf3-f21f-44da-86d2-dc277b6f52a0"{[dataflowId="8527ebf9-d42e-441c-8734-a87d9f8173c9"]}[Data],
+		    Pacientes1 = #"8527ebf9-d42e-441c-8734-a87d9f8173c9"{[entity="Pacientes"]}[Data]
+		in
+		    Pacientes1
+	lineageTag: 7a3c9c58-1d40-4869-b9f0-761e1de345df
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = Table
+
+expression PacientesWSP =
+		let
+		    Origen = PowerBI.Dataflows(null),
+		    #"9e84eaf3-f21f-44da-86d2-dc277b6f52a0" = Origen{[workspaceId="9e84eaf3-f21f-44da-86d2-dc277b6f52a0"]}[Data],
+		    #"eebe4d5e-6c0c-4fd7-bc5a-cefffcb2f741" = #"9e84eaf3-f21f-44da-86d2-dc277b6f52a0"{[dataflowId="eebe4d5e-6c0c-4fd7-bc5a-cefffcb2f741"]}[Data],
+		    Pacientes1 = #"eebe4d5e-6c0c-4fd7-bc5a-cefffcb2f741"{[entity="Pacientes"]}[Data],
+		    #"Columnas quitadas" = Table.RemoveColumns(Pacientes1,{"resp_id_encuesta"})
+		in
+		    #"Columnas quitadas"
+	lineageTag: b904f7df-9004-4dad-bf05-dcef84d4f7a9
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = Table
+
+expression Clinicas =
+		let
+		    Origen = PowerBI.Dataflows(null),
+		    #"9e84eaf3-f21f-44da-86d2-dc277b6f52a0" = Origen{[workspaceId="9e84eaf3-f21f-44da-86d2-dc277b6f52a0"]}[Data],
+		    #"8527ebf9-d42e-441c-8734-a87d9f8173c9" = #"9e84eaf3-f21f-44da-86d2-dc277b6f52a0"{[dataflowId="8527ebf9-d42e-441c-8734-a87d9f8173c9"]}[Data],
+		    #"tabla" = #"8527ebf9-d42e-441c-8734-a87d9f8173c9"{[entity="Clinicas"]}[Data],
+		    #"Columnas con nombre cambiado" = Table.RenameColumns(tabla,{{"cli_id", "Id Clinica"}, {"cli_name", "Nombre Clinica"}, {"enc_id", "Id CliEnc"}, {"enc_tem_id", "Id Encuesta"}, {"tem_enc_nombre", "Nombre Encuesta"}}),
+		    #"Consultas combinadas" = Table.NestedJoin(#"Columnas con nombre cambiado", {"Id Clinica"}, Metas, {"Id Clinica"}, "Metas", JoinKind.LeftOuter),
+		    #"Se expandió Metas" = Table.ExpandTableColumn(#"Consultas combinadas", "Metas", {"Cantidad x dia"}, {"Metas.Cantidad x dia"}),
+		    #"Consultas combinadas1" = Table.NestedJoin(#"Se expandió Metas", {"Id Clinica"}, #"Meta Satisfaccion", {"Id Clinica"}, "Meta Satisfaccion", JoinKind.LeftOuter),
+		    #"Se expandió Meta Satisfaccion" = Table.ExpandTableColumn(#"Consultas combinadas1", "Meta Satisfaccion", {"Satisfaccion", "CES", "FCR", "NPS"}, {"Satisfaccion", "CES", "FCR", "NPS"}),
+		    #"Tipo cambiado1" = Table.TransformColumnTypes(#"Se expandió Meta Satisfaccion",{{"Satisfaccion", type number}, {"CES", type number}, {"FCR", type number}, {"NPS", type number}}),
+		    #"Valor reemplazado" = Table.ReplaceValue(#"Tipo cambiado1",null,0,Replacer.ReplaceValue,{"Metas.Cantidad x dia"}),
+		    #"Columnas con nombre cambiado1" = Table.RenameColumns(#"Valor reemplazado",{{"Metas.Cantidad x dia", "Meta Diaria"}}),
+		    #"Valor reemplazado1" = Table.ReplaceValue(#"Columnas con nombre cambiado1","Clínica ","",Replacer.ReplaceText,{"Nombre Clinica"})
+		in
+		    #"Valor reemplazado1"
+	lineageTag: 7f2370aa-8680-42f9-af8f-4090fda239b2
+	queryGroup: Dimensiones
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = Table
+
+expression PacientesCRT =
+		let
+		    Origen = PowerBI.Dataflows(null),
+		    #"9e84eaf3-f21f-44da-86d2-dc277b6f52a0" = Origen{[workspaceId="9e84eaf3-f21f-44da-86d2-dc277b6f52a0"]}[Data],
+		    #"3c1d4bd0-2c04-4026-a63d-050521a6909a" = #"9e84eaf3-f21f-44da-86d2-dc277b6f52a0"{[dataflowId="3c1d4bd0-2c04-4026-a63d-050521a6909a"]}[Data],
+		    Pacientes1 = #"3c1d4bd0-2c04-4026-a63d-050521a6909a"{[entity="Pacientes"]}[Data]
+		in
+		    Pacientes1
+	lineageTag: f2fc4486-3df7-4322-a220-e9ce5714cef1
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = Table
+
+expression PacientesINO =
+		let
+		    Origen = PowerBI.Dataflows(null),
+		    #"9e84eaf3-f21f-44da-86d2-dc277b6f52a0" = Origen{[workspaceId="9e84eaf3-f21f-44da-86d2-dc277b6f52a0"]}[Data],
+		    #"60d16c0b-f079-4ed5-8444-8e8150d47d71" = #"9e84eaf3-f21f-44da-86d2-dc277b6f52a0"{[dataflowId="60d16c0b-f079-4ed5-8444-8e8150d47d71"]}[Data],
+		    Pacientes1 = #"60d16c0b-f079-4ed5-8444-8e8150d47d71"{[entity="Pacientes"]}[Data]
+		in
+		    Pacientes1
+	lineageTag: ea2eed52-92f2-4165-ad61-ce5243172653
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = Table
+

@@ -1,0 +1,7 @@
+role C_Antioquia
+	modelPermission: read
+
+	tablePermission Clinicas_sk = [Nit_Numero] == "800190884"
+
+	annotation PBI_Id = 0afd362ea9d841b3a58137ad4d9928a5
+

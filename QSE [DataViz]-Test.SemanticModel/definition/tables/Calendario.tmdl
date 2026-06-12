@@ -1,0 +1,124 @@
+table Calendario
+	lineageTag: 8567108f-506c-4d6c-b6ca-0cad4065a24a
+	dataCategory: Time
+
+	column Fecha
+		dataType: dateTime
+		isKey
+		formatString: Long Date
+		lineageTag: 816beff9-5ec1-471c-85ca-96d3e0ef8ea8
+		summarizeBy: none
+		sourceColumn: Fecha
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Año
+		dataType: int64
+		formatString: 0
+		lineageTag: 9c8e1902-d5f5-4516-b28e-6d83b65e2a82
+		summarizeBy: none
+		sourceColumn: Año
+
+		annotation SummarizationSetBy = Automatic
+
+	column Mes
+		dataType: int64
+		formatString: 0
+		lineageTag: 83c118d0-4df2-4eb7-a6e0-3b7f6af95876
+		summarizeBy: none
+		sourceColumn: Mes
+
+		annotation SummarizationSetBy = Automatic
+
+	column Id_Mes
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: cfdbfa2f-9a9c-4bf1-b164-e3a5502bd619
+		summarizeBy: none
+		sourceColumn: Id_Mes
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = User
+
+	column 'Mes Largo'
+		dataType: string
+		lineageTag: e2cc497f-62d7-4f5c-b85d-5f36519a3d59
+		summarizeBy: none
+		sourceColumn: Mes Largo
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Mes Año'
+		dataType: string
+		lineageTag: 89c40c2a-1e59-4f3f-a73a-34d0feebc1c0
+		summarizeBy: none
+		sourceColumn: Mes Año
+		sortByColumn: Id_Mes
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Día del Mes'
+		dataType: int64
+		formatString: 0
+		lineageTag: 294b2364-6694-4c05-8f93-910ac88cf243
+		summarizeBy: none
+		sourceColumn: Día del Mes
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Dia Corto'
+		dataType: string
+		lineageTag: 3030791e-2f00-4f53-bd65-036a82a59c88
+		summarizeBy: none
+		sourceColumn: Dia Corto
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Semana del mes'
+		dataType: int64
+		formatString: 0
+		lineageTag: ddd92433-cf2b-4d69-9508-79b2dc7afa6e
+		summarizeBy: none
+		sourceColumn: Semana del mes
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Dias Laborados'
+		dataType: double
+		isHidden
+		formatString: 0
+		lineageTag: 78648e6e-21cc-4c55-96ac-50122773f9ab
+		summarizeBy: none
+		sourceColumn: Dias Laborados
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Calendario-bc1b0691-0e2f-43b9-a0c9-d22cac10a385 = m
+		mode: import
+		queryGroup: Dimensiones
+		source =
+				let
+				    Origen = PowerBI.Dataflows(null),
+				    #"workspace" = Origen{[workspaceId=WsIdCMIDf]}[Data],
+				    #"dataflow" = #"workspace"{[dataflowId=DfCalendario]}[Data],
+				    #"tabla" = #"dataflow"{[entity="Calendario"]}[Data],
+				    #"Otras columnas quitadas" = Table.SelectColumns(tabla,{"Fecha", "Año", "Mes", "Id_Mes", "Mes Largo", "Mes Año", "Día del Mes", "Dia Corto"}),
+				    #"Semana del mes insertada" = Table.AddColumn(#"Otras columnas quitadas", "Semana del mes", each Date.WeekOfMonth([Fecha]), Int64.Type),
+				    #"Consultas combinadas" = Table.NestedJoin(#"Semana del mes insertada", {"Id_Mes"}, #"Dias Laborados", {"Mes Año"}, "Dias Laborados", JoinKind.LeftOuter),
+				    #"Se expandió Dias Laborados1" = Table.ExpandTableColumn(#"Consultas combinadas", "Dias Laborados", {"Dias Laborados"}, {"Dias Laborados.1"}),
+				    #"Columnas con nombre cambiado" = Table.RenameColumns(#"Se expandió Dias Laborados1",{{"Dias Laborados.1", "Dias Laborados"}}),
+				    #"Poner En Mayúsculas Cada Palabra" = Table.TransformColumns(#"Columnas con nombre cambiado",{{"Mes Año", Text.Proper, type text}}),
+				    #"Valor reemplazado" = Table.ReplaceValue(#"Poner En Mayúsculas Cada Palabra",null,0,Replacer.ReplaceValue,{"Dias Laborados"})
+				in
+				    #"Valor reemplazado"
+
+	annotation PBI_ResultType = Table
+
